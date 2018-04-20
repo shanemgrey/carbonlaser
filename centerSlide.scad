@@ -14,6 +14,7 @@ Covered = 100; // Length used in main carriage for each tube sleeve
 SlideLen = 200; // Width of the "T"
 SlideWid = 50; // Height of the "T"
 Gap = 4; //Gap between top and bottom plates and center assembly for main carriage
+Rounding = 3; // Radius of the rounding
 
 //Mounting Plate Minimum Size
 X = 30; // One side of mounting plate
@@ -34,20 +35,13 @@ difference()
 
 module MainCarriage ()
 {
-// Mounting Cutout
-rotate([0,90,0]) translate([Rail/2+Teflon,Rail/2+Teflon,-Rail/2-Teflon-Wall]) difference()
-	{
-	cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset], center=false);
-	translate([Wall,Wall,-.5]) cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z+1:2*Rail+2*Teflon+2*Wall+Offset+1], center=false);
-	};
-
-// Mounting Cutout inverted
-rotate([90,0,-90]) translate([Rail/2+Teflon,Rail/2+Teflon,(Rail/2+Teflon+Wall)-(Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset)]) difference()
-	{
-	cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset], center=false);
-	translate([Wall,Wall,-.5]) cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z+1:2*Rail+2*Teflon+2*Wall+Offset+1], center=false);
-	};
-
+    //rounding, by creating a bounding box of the correct shape for the outside.  Tubes added later
+    intersection(){
+minkowski(){
+    translate([(-Rail/2-Teflon-Wall)+Rounding,((X*2+Rail+Teflon*2)/-2)+Rounding,((Y*2+Rail+Teflon*2)/-2)+Rounding]) cube([(2*Rail+2*Wall+2*Teflon+Offset)-2*Rounding,(X*2+Rail+Teflon*2)-2*Rounding,(Y*2+Rail+Teflon*2)-2*Rounding],center=false);
+    sphere(r=Rounding);
+};
+union(){
 // Fastening Block
 rotate([180,90,0]) translate([Rail/2+Teflon,Rail/2+Teflon,(Rail/2+Teflon+Wall)-(Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset)])
 cube ([X,Y,2*Rail+2*Teflon+2*Wall+Offset], center=false);
@@ -57,9 +51,7 @@ rotate([180,-90,0]) translate([Rail/2+Teflon,-Rail/2-Teflon-Y,-Rail/2-Teflon-Wal
 cube ([X,Y,2*Rail+2*Teflon+2*Wall+Offset], center=false);
 
 
-// Main Cross
-translate([0,0,0]) rotate([90,0,0]) Tunnel(Covered);
-translate([Rail+Offset-2*Teflon,0,0]) rotate([0,0,0]) Tunnel(Covered); // Set at 90 degrees to first tube, set distance to match the measured top to bottom distance between the two rails, and including additional offset/leeway for teflon tape expected thickness
+
 
 // Middle Filler X
 translate([Rail/2+Offset/2,0,0])
@@ -93,6 +85,27 @@ cube([Rail+Teflon*2+Wall*2,Rail+Teflon*2,X], center=true);
 // Filler Cube 4
 translate([0,0,-Rail/2-Teflon-X/2])
 cube([Rail+Teflon*2+Wall*2,Rail+Teflon*2,X], center=true);
+};
+};
+// Main Cross
+translate([0,0,0]) rotate([90,0,0]) Tunnel(Covered);
+translate([Rail+Offset-2*Teflon,0,0]) rotate([0,0,0]) Tunnel(Covered); // Set at 90 degrees to first tube, set distance to match the measured top to bottom distance between the two rails, and including additional offset/leeway for teflon tape expected thickness
+
+
+// Mounting Cutout
+rotate([0,90,0]) translate([Rail/2+Teflon,Rail/2+Teflon,-Rail/2-Teflon-Wall]) difference()
+	{
+	cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset], center=false);
+	translate([Wall,Wall,-.5]) cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z+1:2*Rail+2*Teflon+2*Wall+Offset+1], center=false);
+	};
+
+// Mounting Cutout inverted
+rotate([90,0,-90]) translate([Rail/2+Teflon,Rail/2+Teflon,(Rail/2+Teflon+Wall)-(Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset)]) difference()
+	{
+	cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset], center=false);
+	translate([Wall,Wall,-.5]) cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z+1:2*Rail+2*Teflon+2*Wall+Offset+1], center=false);
+	};
+
 };
 
 
