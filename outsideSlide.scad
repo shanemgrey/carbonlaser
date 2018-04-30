@@ -7,138 +7,145 @@
 // Include global parameters for the project
 include <parameters.scad>;
 
+// Additional file level parameters
+slideCarriageWidth = max(slideRodDiameter + (boltType1HeadDiameter*2+wallThicknessMin * 2),slideCarriageSocketDepthMin ) ;
+slideCarriageHeight = slideRodDiameter + (wallThicknessMin * 2);
 
+socketDepth = slideCarriageWidth;
 
-//////////////////////////
-// Test fit with these
-//////////////////////////
-// testSlideRodDiameter();
-//
-// translate([-socketDepth*1.5,0,0])
-// testMovingRodDiameter();
-//
-// translate([-socketDepth*3,0,0])
-// testBoltFit();
-
-////////////////////////////////////////////////////
-// Print these if everything looks like it will fit
-////////////////////////////////////////////////////
-// translate([-socketDepth*2,0,socketDepth/2])
-// rotate([0,90,0])
-// tSlidePartTop();
-//
-// translate([0,0,cubeHeight/2])
-// rotate([0,180,0])
-// tSlidePartMiddle();
-//
-// translate([socketDepth*1.5,0,cubeHeight/2])
-// tSlideBottom();
-
+View();
+// PrintTestFitParts();
+// PrintParts();
 
 ///////////////////////////////////////
 // Visualize finished parts with these
 ///////////////////////////////////////
-// tSlide();
-// tSlidePartTop();
-// tSlidePartMiddle();
-// tSlideBottom();
-// tSlideCutouts();
-sectionedView();
+// SlideCarriage();
+// SlideCarriagePartTop();
+// SlideCarriagePartMiddle();
+// SlideCarriageBottom();
+// SlideCarriageCutouts();
+// SectionedView();
+
+// translate([-socketDepth*1.5,0,0])
+// BoltType1Hole();
+// translate([-socketDepth*2.5,0,0])
+// BoltType1();
+
+module View () {
+  SectionedView();
+}
+
+module PrintTestFitParts () {
+  SlideCarriageRodDiameterTest();
+  translate([-socketDepth*1.5,0,0])
+  MovingRodDiameterTest();
+  translate([-socketDepth*3,0,0])
+  BoltFitTest();
+}
+
+module PrintParts () {
+  translate([-socketDepth*2,0,socketDepth/2])
+  rotate([0,90,0])
+  SlideCarriagePartTop();
+  translate([0,0,slideCarriageHeight/2])
+  rotate([0,180,0])
+  SlideCarriagePartMiddle();
+  translate([socketDepth*1.5,0,slideCarriageHeight/2])
+  SlideCarriageBottom();
+}
 
 
-// Additional file level parameters
-cubeLength = slideCarriageLength;
-cubeWidth = max(slideRodDiameter + (wallMinThickness * 4),slideCarriageSocketDepthMin) ;
-cubeHeight = slideRodDiameter + (wallMinThickness * 2);
 
-socketDepth = max(slideRodDiameter + (wallMinThickness * 4),slideCarriageSocketDepthMin) ;
-
-
-
-
-module testSlideRodDiameter () {
+module SlideCarriageRodDiameterTest () {
   difference () {
-    cylinder(d=slideRodDiameter + wallMinThickness*2 , h=8, center=true, $fn=fnLargeDiameter);
+    cylinder(d=slideRodDiameter + wallThicknessMin*2 , h=8, center=true, $fn=fnLargeDiameter);
     cylinder(d=slideRodDiameter, h=9, center=true, $fn=fnLargeDiameter);
   }
 }
 
-module testMovingRodDiameter () {
+module MovingRodDiameterTest () {
   difference () {
-    cylinder(d=crossRodDiameter + wallMinThickness*2 , h=8, center=true, $fn=fnLargeDiameter);
+    cylinder(d=crossRodDiameter + wallThicknessMin*2 , h=8, center=true, $fn=fnLargeDiameter);
     cylinder(d=crossRodDiameter, h=9, center=true, $fn=fnLargeDiameter);
   }
 }
 
-module testBoltFit () {
+// Tests that the threads grab properly
+module BoltThreadingTest () {
   difference () {
-    cube([boltType1HeadDiameter*2, boltType1HeadDiameter*2, totalBoltLength/3*2], center=true);
-    boltType1Hole();
+    cube([boltType1HeadHoleDiameter*2, boltType1HeadHoleDiameter*2, totalBoltLength/3*2], center=true);
+    translate([0,0,slideCarriageHeight/2])
+    BoltType1Hole();
+  }
+}
+// Tests that the head and shaft fit easily
+module BoltFitTest () {
+  difference () {
+    cube([boltType1HeadHoleDiameter*2, boltType1HeadHoleDiameter*2, totalBoltLength/3*2], center=true);
+    translate([0,0,slideCarriageHeight/2])
+    BoltType1Hole();
   }
 }
 
-// module testSlideRodDiameter () {
-//
-// }
-
-module tSlidePartTop () {
+module SlideCarriagePartTop () {
   // color("green")
   difference() {
-    tSlide();
-    cube([cubeWidth+0.01, cubeLength+0.01, cubeHeight+0.01], center=true);
+    SlideCarriage();
+    cube([slideCarriageWidth+0.01, slideCarriageLength+0.01, slideCarriageHeight+0.01], center=true);
   }
 }
 
-module tSlidePartMiddle () {
+module SlideCarriagePartMiddle () {
   // color("green")
   intersection() {
-    tSlide();
-    translate([0,0,cubeHeight/4 + slideSplitWidth/4])
-    cube([cubeWidth+0.01, cubeLength+0.01, cubeHeight/2 - slideSplitWidth/2], center=true);
+    SlideCarriage();
+    translate([0,0,slideCarriageHeight/4 + slideCarriageSplitWidth/4])
+    cube([slideCarriageWidth+0.01, slideCarriageLength+0.01, slideCarriageHeight/2 - slideCarriageSplitWidth/2], center=true);
   }
 }
 
-module tSlideBottom () {
+module SlideCarriageBottom () {
   // color("yellow")
   intersection() {
-    tSlide();
-    translate([0,0,-(cubeHeight/4 + slideSplitWidth/4)])
-    cube([cubeWidth+0.01, cubeLength+0.01, cubeHeight/2 - slideSplitWidth/2], center=true);
+    SlideCarriage();
+    translate([0,0,-(slideCarriageHeight/4 + slideCarriageSplitWidth/4)])
+    cube([slideCarriageWidth+0.01, slideCarriageLength+0.01, slideCarriageHeight/2 - slideCarriageSplitWidth/2], center=true);
   }
   // difference() {
-  //   tSlide();
-  //   translate([0,0,(slideRodDiameter*3 - slideSplitWidth)/2])
-  //   cube([cubeWidth*2, slideCarriageLength+1, slideRodDiameter*3], center=true);
+  //   SlideCarriage();
+  //   translate([0,0,(slideRodDiameter*3 - slideCarriageSplitWidth)/2])
+  //   cube([slideCarriageWidth*2, slideCarriageLength+1, slideRodDiameter*3], center=true);
   // }
 }
 
-module tSlide () {
+module SlideCarriage () {
   difference() {
-    tSlideSolids();
-    tSlideCutouts();
+    SlideCarriageSolids();
+    SlideCarriageCutouts();
   }
 }
 
-module tSlideSolids () {
+module SlideCarriageSolids () {
     // render() {
       // union() {
 
       // full slide
         // union() {
         rotate([90,0,0])
-        cylinder(d=slideRodDiameter + (wallMinThickness * 2), h=slideCarriageLength, center=true, $fn=fnLargeDiameter);
+        cylinder(d=slideRodDiameter + (wallThicknessMin * 2), h=slideCarriageLength, center=true, $fn=fnLargeDiameter);
         // }
-        translate([-cubeWidth/2, -cubeLength/2, -cubeHeight/2])
-        roundedBox ([cubeWidth, cubeLength, cubeHeight], wallMinThickness, true, $fn=40);
-        // cube ([cubeWidth, cubeLength, cubeHeight]);
+        translate([-slideCarriageWidth/2, -slideCarriageLength/2, -slideCarriageHeight/2])
+        RoundedBox ([slideCarriageWidth, slideCarriageLength, slideCarriageHeight], wallThicknessMin, true, $fn=40);
+        // cube ([slideCarriageWidth, slideCarriageLength, slideCarriageHeight]);
 
 
       // color("blue")
         hull() {
-          cube([cubeWidth, socketDepth+wallMinThickness*2, cubeHeight], center=true);
-          translate([0, 0,crossRodDiameter+wallMinThickness *2])
+          cube([slideCarriageWidth, socketDepth+wallThicknessMin*2, slideCarriageHeight], center=true);
+          translate([0, 0,crossRodDiameter+wallThicknessMin *2])
           rotate([0,90,0])
-          cylinder(d=crossRodDiameter + (wallMinThickness * 2), h=socketDepth, center=true, $fn=fnLargeDiameter);
+          cylinder(d=crossRodDiameter + (wallThicknessMin * 2), h=socketDepth, center=true, $fn=fnLargeDiameter);
         }
 
     // }
@@ -147,7 +154,7 @@ module tSlideSolids () {
 
 
 
-  module tSlideCutouts () {
+  module SlideCarriageCutouts () {
 
     // Cut out the rods and section the tubes
     // render() {
@@ -158,85 +165,96 @@ module tSlideSolids () {
       cylinder(d=slideRodDiameter + teflonTapeThickness, h=slideCarriageLength+1, center=true, $fn=fnLargeDiameter);
 
       // cut socket hole
-      translate([0, 0,(slideRodDiameter+crossRodDiameter)/2+wallMinThickness*2])
+      translate([0, 0,(slideRodDiameter+crossRodDiameter)/2+wallThicknessMin*2])
       rotate([0,90,0])
       cylinder(d=crossRodDiameter, h=socketDepth+1, center=true, $fn=fnLargeDiameter);
 
 
       // cut holes for top socket attachment
       rotate ([0,180,0]){
-        translate([(slideRodDiameter + wallMinThickness*1.5)/2, (crossRodDiameter + wallMinThickness*1.5)/2, -wallMinThickness]) {
-        boltType1Hole();
-        }
-        translate([-((slideRodDiameter + wallMinThickness*1.5)/2), (crossRodDiameter + wallMinThickness*1.5)/2, -wallMinThickness]) {
-        boltType1Hole();
-        }
-        translate([(slideRodDiameter + wallMinThickness*1.5)/2, -((crossRodDiameter + wallMinThickness*1.5)/2), -wallMinThickness]) {
-        boltType1Hole();
-        }
-        translate([-((slideRodDiameter + wallMinThickness*1.5)/2), -((crossRodDiameter + wallMinThickness*1.5)/2), -wallMinThickness]) {
-        boltType1Hole();
-        }
+        translate([(slideRodDiameter + boltType1HeadHoleDiameter + wallThicknessMin)/2, (crossRodDiameter + wallThicknessMin*1.5)/2, boltType1ShaftLength-(slideCarriageHeight)/2])
+        #BoltType1Hole();
+
+        translate([-((slideRodDiameter + boltType1HeadHoleDiameter + wallThicknessMin)/2), (crossRodDiameter + wallThicknessMin*1.5)/2, boltType1ShaftLength-(slideCarriageHeight)/2])
+        #BoltType1Hole();
+
+        translate([(slideRodDiameter + boltType1HeadHoleDiameter + wallThicknessMin)/2, -((crossRodDiameter + wallThicknessMin*1.5)/2), boltType1ShaftLength-(slideCarriageHeight)/2])
+        #BoltType1Hole();
+
+        translate([-((slideRodDiameter + boltType1HeadHoleDiameter + wallThicknessMin)/2), -((crossRodDiameter + wallThicknessMin*1.5)/2), boltType1ShaftLength-(slideCarriageHeight)/2])
+        #BoltType1Hole();
+
       }
 
       // cut holes for clamp boltType1s
       // TODO: Make this an iteration such that slide length determines number of holes and positioning
       // This would allow for better dynamic resizing of the parts
-        translate([slideRodDiameter/2 + wallMinThickness, -slideCarriageLength/2.5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([slideRodDiameter/2 + wallThicknessMin, -slideCarriageLength/2.5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([slideRodDiameter/2 + wallMinThickness, -slideCarriageLength/5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([slideRodDiameter/2 + wallThicknessMin, -slideCarriageLength/5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([slideRodDiameter/2 + wallMinThickness, slideCarriageLength/2.5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([slideRodDiameter/2 + wallThicknessMin, slideCarriageLength/2.5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([slideRodDiameter/2 + wallMinThickness, slideCarriageLength/5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([slideRodDiameter/2 + wallThicknessMin, slideCarriageLength/5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([-(slideRodDiameter/2 + wallMinThickness), -slideCarriageLength/2.5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([-(slideRodDiameter/2 + wallThicknessMin), -slideCarriageLength/2.5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([-(slideRodDiameter/2 + wallMinThickness), -slideCarriageLength/5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([-(slideRodDiameter/2 + wallThicknessMin), -slideCarriageLength/5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([-(slideRodDiameter/2 + wallMinThickness), slideCarriageLength/2.5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([-(slideRodDiameter/2 + wallThicknessMin), slideCarriageLength/2.5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
 
-        translate([-(slideRodDiameter/2 + wallMinThickness), slideCarriageLength/5,cubeHeight/2-wallMinThickness])
-        boltType1Hole();
+        #translate([-(slideRodDiameter/2 + wallThicknessMin), slideCarriageLength/5,boltType1ShaftLength+slideCarriageSplitWidth/2])
+        BoltType1Hole();
     // }
   // }
   }
 
-module sectionedView () {
+module SectionedView () {
   // Cut section temporarily to view boltType1 channel inside
   difference() {
     union() {
-      tSlidePartTop();
-      tSlidePartMiddle();
-      tSlideBottom();
+      SlideCarriagePartTop();
+      SlideCarriagePartMiddle();
+      SlideCarriageBottom();
     }
-    tSlideCutouts();
-    translate([-socketDepth/2, -slideCarriageLength/2 -((crossRodDiameter + wallMinThickness*1.5)/2),0])
-    cube([socketDepth+1,slideCarriageLength,socketDepth+1], center=true);
+    SlideCarriageCutouts();
+    translate([-socketDepth/2, -slideCarriageLength/2 -((crossRodDiameter + wallThicknessMin*1.5)/2),0])
+    cube([socketDepth+1,slideCarriageLength,slideCarriageHeight*3], center=true);
     translate([-socketDepth/2, (socketDepth/2+0)+slideCarriageLength/2.5,0])
-    cube([socketDepth+1,socketDepth+1,socketDepth+1], center=true);
+    cube([socketDepth+1,socketDepth+1,slideCarriageHeight*3], center=true);
   }
 }
 
-module boltType1Hole() {
+module BoltType1Hole() {
   render() {
-    translate([0,0,totalBoltLength/2])
-    cylinder(d=boltType1HeadDiameter, h=totalBoltLength, center=true, $fn=fnSmallDiameter);
-    translate([0,0,(totalBoltLength)/2-slideRodDiameter/2 - slideSplitWidth])
-    cylinder(r1=boltType1ShaftDiameter/2, r2=boltType1ShaftDiameter/2, h=totalBoltLength, center=true, $fn=fnSmallDiameter);
-    translate([0,0,(totalBoltLength)/2-slideRodDiameter/2 - crossRodDiameter/2])
-    cylinder(d=boltType1ThreadDiameter, h=totalBoltLength, center=true, $fn=fnSmallDiameter);
+    // translate([0,0,totalBoltLength/2])
+    cylinder(d=boltType1HeadHoleDiameter, h=boltType1HeadHoleLength, center=false, $fn=fnSmallDiameter);
+    translate([0,0,-boltType1ShaftHoleLength])
+    cylinder(d=boltType1ShaftHoleDiameter, h=boltType1ShaftHoleLength, center=false, $fn=fnSmallDiameter);
+    translate([0,0,-(boltType1ThreadHoleLength+boltType1ShaftHoleLength)])
+    cylinder(d=boltType1ThreadHoleDiameter, h=boltType1ThreadHoleLength, center=false, $fn=fnSmallDiameter);
   }
 }
 
-module roundedBox(size, radius, sidesonly) {
+module BoltType1() {
+  render() {
+    // translate([0,0,totalBoltLength/2])
+    cylinder(d=boltType1HeadDiameter, h=boltType1HeadLength, center=false, $fn=fnSmallDiameter);
+    translate([0,0,-boltType1ShaftLength])
+    cylinder(d=boltType1ShaftDiameter, h=boltType1ShaftLength, center=false, $fn=fnSmallDiameter);
+    translate([0,0,-(boltType1ThreadLength+boltType1ShaftLength)])
+    cylinder(d=boltType1ThreadDiameter, h=boltType1ThreadLength, center=false, $fn=fnSmallDiameter);
+  }
+}
+
+module RoundedBox(size, radius, sidesonly) {
         rot = [ [0,0,0], [90,0,90], [90,90,0] ];
 
         // Translate shape back to origin on corners
