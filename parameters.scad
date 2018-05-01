@@ -21,6 +21,14 @@ slideCarriageSocketDepthMin = 20;
 // gantry rides on at the intersection of the crossRods
 gantryXLength = 100;
 gantryYLength = 100;
+// Measured gap between crossRods
+gantryGap = 15; 
+// mounting cutout on the gantry minimum size,
+mountPlateXLength = 30;
+mountPlateYLength = 30;
+mountPlateZLength = 10;
+//Fillet/roundover radius for the gantry
+gantryFillet = 3;
 
 teflonTapeThickness = 0.1; // The tape used inside the slides to reduce friction on the slides
 

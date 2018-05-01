@@ -3,202 +3,8 @@
 WARNING:  During construction of the machine, the main moving cross members must have a minimum clearance equal to 2x the thickness of the printed walls and 2 layers of teflon tape.
 ************************************************************************
 */
-
-//Global Variables
-Wall = 3; // Printed wall thickness
-Rail = 12; // Diameter of rail in use, assuming all rails are the same size
-Teflon = 0.13; // Thickness of teflon tape to be applied after printing
-Offset = 15; // Distance between main crossing beams as measured
-Bolt = 5; //Assembly bolt outer diameter for pre-"drilled" holes
-Covered = 100; // Length used in main carriage for each tube sleeve
-SlideLen = 200; // Width of the "T"
-SlideWid = 50; // Height of the "T"
-Gap = 4; //Gap between top and bottom plates and center assembly for main carriage
-Rounding = 3; // Radius of the rounding
-
-//Mounting Plate Minimum Size
-X = 30; // One side of mounting plate
-Y = 30; // The other side of mounting plate
-Z = 10; // Minimum height of the mounting plate
-
-$fn=50; // Set "roundness"
-
-module Tunnel (Length)
-{
-//Slide "tube"
-difference()
-	{
-	cylinder(h=Length,d=Rail+2*Wall+2*Teflon,center=true); //main cylinder
-	cylinder(h=Length+10, d=Rail+2*Teflon,center=true); //hole
-	};
-};
-
-module MainCarriage ()
-{
-    //rounding, by creating a bounding box of the correct shape for the outside.  Tubes added later
-    intersection(){
-minkowski(){
-    translate([(-Rail/2-Teflon-Wall)+Rounding,((X*2+Rail+Teflon*2)/-2)+Rounding,((Y*2+Rail+Teflon*2)/-2)+Rounding]) cube([(2*Rail+2*Wall+2*Teflon+Offset)-2*Rounding,(X*2+Rail+Teflon*2)-2*Rounding,(Y*2+Rail+Teflon*2)-2*Rounding],center=false);
-    sphere(r=Rounding);
-};
-union(){
-// Fastening Block
-rotate([180,90,0]) translate([Rail/2+Teflon,Rail/2+Teflon,(Rail/2+Teflon+Wall)-(Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset)])
-cube ([X,Y,2*Rail+2*Teflon+2*Wall+Offset], center=false);
-
-// Fastening Block 2
-rotate([180,-90,0]) translate([Rail/2+Teflon,-Rail/2-Teflon-Y,-Rail/2-Teflon-Wall])
-cube ([X,Y,2*Rail+2*Teflon+2*Wall+Offset], center=false);
-
-
-
-
-// Middle Filler X
-translate([Rail/2+Offset/2,0,0])
-	{
-	cube([Offset-Teflon,X*2+Rail+Teflon*2,Rail+Teflon*2], center=true);
-	cube([Offset-Teflon,Rail+Teflon*2,Y*2+Rail+Teflon*2], center=true);
-	};
-
-// Lower Filler X
-translate([-Rail/2-Teflon-Wall/2,0,0])
-	{
-	cube([Wall,X*2+Rail+Teflon*2,Rail+Teflon*2], center=true);
-	cube([Wall,Rail+Teflon*2,Y*2+Rail+Teflon*2], center=true);
-	};
-// Upper Filler X
-translate([Rail*1.5+Teflon+Offset+Wall*0.5,0,0])
-	{
-	cube([Wall,X*2+Rail+Teflon*2,Rail+Teflon*2], center=true);
-	cube([Wall,Rail+Teflon*2,Y*2+Rail+Teflon*2], center=true);
-	};
-
-// Filler Cube 1
-translate([Offset+Rail,Y/2+Rail/2+Teflon,0])
-cube([Rail+Teflon*2,Y,Rail+Teflon*2], center=true);
-// Filler Cube 2
-translate([Offset+Rail,-Y/2-Rail/2-Teflon,0])
-cube([Rail+Teflon*2,Y,Rail+Teflon*2], center=true);
-// Filler Cube 3
-translate([0,0,Rail/2+Teflon+X/2])
-cube([Rail+Teflon*2+Wall*2,Rail+Teflon*2,X], center=true);
-// Filler Cube 4
-translate([0,0,-Rail/2-Teflon-X/2])
-cube([Rail+Teflon*2+Wall*2,Rail+Teflon*2,X], center=true);
-};
-};
-// Main Cross
-translate([0,0,0]) rotate([90,0,0]) Tunnel(Covered);
-translate([Rail+Offset-2*Teflon,0,0]) rotate([0,0,0]) Tunnel(Covered); // Set at 90 degrees to first tube, set distance to match the measured top to bottom distance between the two rails, and including additional offset/leeway for teflon tape expected thickness
-
-
-// Mounting Cutout
-rotate([0,90,0]) translate([Rail/2+Teflon,Rail/2+Teflon,-Rail/2-Teflon-Wall]) difference()
-	{
-	cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset], center=false);
-	translate([Wall,Wall,-.5]) cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z+1:2*Rail+2*Teflon+2*Wall+Offset+1], center=false);
-	};
-
-// Mounting Cutout inverted
-rotate([90,0,-90]) translate([Rail/2+Teflon,Rail/2+Teflon,(Rail/2+Teflon+Wall)-(Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset)]) difference()
-	{
-	cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z:2*Rail+2*Teflon+2*Wall+Offset], center=false);
-	translate([Wall,Wall,-.5]) cube ([X,Y,Z>2*Rail+2*Teflon+2*Wall+Offset?Z+1:2*Rail+2*Teflon+2*Wall+Offset+1], center=false);
-	};
-
-};
-
-
-module DrillCarriage()
-{
-difference()
-	{
-	MainCarriage();
-// Drill holes for assembly
-	rotate([0,90,0]) translate([-(Rail+X)/2,(Rail+X)/2,0])
-	cylinder(h=500,d=Bolt+0.1,center=true);
-	rotate([0,90,0]) translate([(Rail+X)/2,-(Rail+X)/2,0])
-	cylinder(h=500,d=Bolt+0.1,center=true);
-	};
-};
-
-module DrillCarriageA()
-{
-difference()
-	{
-	DrillCarriage();
-	translate([-Gap/2,-Covered/2-5,-Covered/2-5]) cube([Covered+10,Covered+10,Covered+10], center=false);
-	};
-};
-
-module DrillCarriageB()
-{
-difference()
-	{
-	DrillCarriage();
-	union()
-		{
-		translate([Gap/2-(Covered+10),-Covered/2-5,-Covered/2-5]) cube([Covered+10,Covered+10,Covered+10], center=false);
-		translate([(Rail+Offset)/2,-Covered/2-5,-Covered/2-5]) cube([Covered+10,Covered+10,Covered+10], center=false);
-		};
-	};
-};
-
-module DrillCarriageC()
-{
-difference()
-	{
-	DrillCarriage();
-	union()
-		{
-		translate([(Rail+Offset)-Gap/2,-Covered/2-5,-Covered/2-5]) cube([Covered+10,Covered+10,Covered+10], center=false);
-		translate([((Rail+Offset)/2)-(Covered+10),-Covered/2-5,-Covered/2-5]) cube([Covered+10,Covered+10,Covered+10], center=false);
-		};
-	};
-};
-
-module DrillCarriageD()
-{
-difference()
-	{
-	DrillCarriage();
-	translate([((Rail+Offset)+Gap/2)-(Covered+10),-Covered/2-5,-Covered/2-5]) cube([Covered+10,Covered+10,Covered+10], center=false);
-	};
-};
-
-
-
-module EdgeT()
-{
-//outside rail connector
-
-difference()
-	{
-	union()
-		{
-		Tunnel(SlideLen);
-		rotate([0,90,0]) translate([0,0,Rail/2+Teflon+(SlideWid-Rail-2*Wall-2*Teflon)/2]) Tunnel(SlideWid-Rail-2*Wall-2*Teflon);
-		translate([Rail/2+2*Teflon,-Rail/2-Teflon-Wall,Rail/2+Teflon])cube([SlideWid-Rail-2*Wall-2*Teflon,Rail+2*Wall+2*Teflon,SlideLen/2-Rail/2-Teflon]);
-		translate([Rail/2+2*Teflon,-Rail/2-Teflon-Wall,-SlideLen/2+Teflon])cube([SlideWid-Rail-2*Wall-2*Teflon,Rail+2*Wall+2*Teflon,SlideLen/2-Rail/2-Teflon]);
-		};
-
-	union()
-		{
-		rotate([90,0,0]) translate([SlideWid/2,SlideLen/4],0) cylinder(h=Rail+Teflon*2+Wall*2+10,d=Bolt,center=true);
-		rotate([90,0,0]) translate([SlideWid/2,-SlideLen/4],0) cylinder(h=Rail+Teflon*2+Wall*2+10,d=Bolt,center=true);
-		translate([-Rail/2-Teflon-Wall-5,-Gap/2,-SlideLen/2-5]) cube([SlideWid+10,Rail/2+Teflon+Wall+10,SlideLen+10], center=false);
-		};
-	};
-};
-
-module Bracket();
-{
-// mounting bracket for frame rails
-};
-
-//Tunnel(Covered); // empty slide tube
-//MainCarriage(); // broken into 4 parts
-
+// dependancies
+include <parameters.scad>
 
 
 // *************************************************************
@@ -212,11 +18,136 @@ DrillCarriageB();
 DrillCarriageC();
 DrillCarriageD();
 
-// Edge Slide Half
-// 8 each
 
-//EdgeT();
+module MainCarriage ()
+{
+    //rounding, by creating a bounding box of the correct shape for the outside.  Tubes added later
+    intersection(){
+minkowski(){
+    translate([(-crossRodDiameter/2-teflonTapeThickness-wallMinThickness)+gantryFillet,((mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2)/-2)+gantryFillet,((mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2)/-2)+gantryFillet]) cube([(2*crossRodDiameter+2*wallMinThickness+2*teflonTapeThickness+gantryGap)-2*gantryFillet,(mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2)-2*gantryFillet,(mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2)-2*gantryFillet],center=false);
+    sphere(r=gantryFillet, $fn = fnSmallDiameter);
+};
+union(){
+// Fastening Block
+rotate([180,90,0]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,(crossRodDiameter/2+teflonTapeThickness+wallMinThickness)-(mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap)])
+cube ([mountPlateXLength,mountPlateYLength,2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
 
-// 8 each
+// Fastening Block 2
+rotate([180,-90,0]) translate([crossRodDiameter/2+teflonTapeThickness,-crossRodDiameter/2-teflonTapeThickness-mountPlateYLength,-crossRodDiameter/2-teflonTapeThickness-wallMinThickness])
+cube ([mountPlateXLength,mountPlateYLength,2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
 
-//Bracket();
+
+
+
+// Middle Filler Cross
+translate([crossRodDiameter/2+gantryGap/2,0,0])
+	{
+	cube([gantryGap-teflonTapeThickness,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([gantryGap-teflonTapeThickness,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
+	};
+
+// Lower Filler Cross
+translate([-crossRodDiameter/2-teflonTapeThickness-wallMinThickness/2,0,0])
+	{
+	cube([wallMinThickness,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([wallMinThickness,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
+	};
+// Upper Filler Cross
+translate([crossRodDiameter*1.5+teflonTapeThickness+gantryGap+wallMinThickness*0.5,0,0])
+	{
+	cube([wallMinThickness,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([wallMinThickness,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
+	};
+
+// Filler Cube 1
+translate([gantryGap+crossRodDiameter,mountPlateYLength/2+crossRodDiameter/2+teflonTapeThickness,0])
+cube([crossRodDiameter+teflonTapeThickness*2,mountPlateYLength,crossRodDiameter+teflonTapeThickness*2], center=true);
+// Filler Cube 2
+translate([gantryGap+crossRodDiameter,-mountPlateYLength/2-crossRodDiameter/2-teflonTapeThickness,0])
+cube([crossRodDiameter+teflonTapeThickness*2,mountPlateYLength,crossRodDiameter+teflonTapeThickness*2], center=true);
+// Filler Cube 3
+translate([0,0,crossRodDiameter/2+teflonTapeThickness+mountPlateXLength/2])
+cube([crossRodDiameter+teflonTapeThickness*2+wallMinThickness*2,crossRodDiameter+teflonTapeThickness*2,mountPlateXLength], center=true);
+// Filler Cube 4
+translate([0,0,-crossRodDiameter/2-teflonTapeThickness-mountPlateXLength/2])
+cube([crossRodDiameter+teflonTapeThickness*2+wallMinThickness*2,crossRodDiameter+teflonTapeThickness*2,mountPlateXLength], center=true);
+};
+};
+// Main Cross
+translate([0,0,0]) rotate([90,0,0]) Tunnel(gantryYLength);
+translate([crossRodDiameter+gantryGap-2*teflonTapeThickness,0,0]) rotate([0,0,0]) Tunnel(gantryXLength); // Set at 90 degrees to first tube, set distance to match the measured top to bottom distance between the two rails, and including additional offset/leeway for teflon tape expected thickness
+
+
+// Mounting Cutout
+rotate([0,90,0]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,-crossRodDiameter/2-teflonTapeThickness-wallMinThickness]) difference()
+	{
+	cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
+	translate([wallMinThickness,wallMinThickness,-.5]) cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength+1:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap+1], center=false);
+	};
+
+// Mounting Cutout inverted
+rotate([90,0,-90]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,(crossRodDiameter/2+teflonTapeThickness+wallMinThickness)-(mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap)]) difference()
+	{
+	cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
+	translate([wallMinThickness,wallMinThickness,-.5]) cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength+1:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap+1], center=false);
+	};
+
+};
+
+module Tunnel (Length)
+{
+//Slide "tube"
+difference()
+	{
+	cylinder(h=Length,d=crossRodDiameter+2*wallMinThickness+2*teflonTapeThickness,center=true, $fn = fnLargeDiameter); //main cylinder
+	cylinder(h=Length+10, d=crossRodDiameter+2*teflonTapeThickness,center=true, $fn = fnLargeDiameter); //hole
+	};
+};
+module DrillCarriage()
+{
+difference()
+	{
+	MainCarriage();
+// Drill holes for assembly
+	rotate([0,90,0]) translate([-(crossRodDiameter+mountPlateXLength)/2,(crossRodDiameter+mountPlateXLength)/2,0])
+	cylinder(h=500,d=boltType1ShaftDiameter+0.1,center=true, $fn = fnSmallDiameter);
+	rotate([0,90,0]) translate([(crossRodDiameter+mountPlateXLength)/2,-(crossRodDiameter+mountPlateXLength)/2,0])
+	cylinder(h=500,d=boltType1ShaftDiameter+0.1,center=true, $fn = fnSmallDiameter);
+	};
+};
+
+module DrillCarriageA()
+{
+intersection()
+	{
+	DrillCarriage();
+	translate([-slideSplitWidth/2-(wallMinThickness+teflonTapeThickness+crossRodDiameter/2),-gantryYLength/2,-gantryXLength/2]) cube([wallMinThickness+teflonTapeThickness+crossRodDiameter/2,gantryYLength,gantryXLength],center=false);
+	};
+};
+
+module DrillCarriageB()
+{
+intersection()
+	{
+	DrillCarriage();
+	translate([slideSplitWidth/2,-gantryYLength/2,-gantryXLength/2]) cube([(gantryGap/2+wallMinThickness+teflonTapeThickness+crossRodDiameter/2),gantryYLength,gantryXLength],center=false);	
+	};
+};
+
+module DrillCarriageC()
+{
+intersection()
+	{
+	DrillCarriage();
+	translate([gantryGap/2+crossRodDiameter/2,-gantryYLength/2,-gantryXLength/2]) cube([crossRodDiameter/2+gantryGap/2-slideSplitWidth/2,gantryYLength,gantryXLength],center=false);
+	};
+};
+
+module DrillCarriageD()
+{
+intersection()
+{
+	DrillCarriage();
+	translate([slideSplitWidth/2+gantryGap+2*teflonTapeThickness+2*wallMinThickness+crossRodDiameter/2,-gantryYLength/2,-gantryXLength/2]) cube([wallMinThickness+teflonTapeThickness+crossRodDiameter/2,gantryYLength,gantryXLength],center=false);
+};
+};
