@@ -24,17 +24,17 @@ module MainCarriage ()
     //rounding, by creating a bounding box of the correct shape for the outside.  Tubes added later
     intersection(){
 minkowski(){
-    translate([(-crossRodDiameter/2-teflonTapeThickness-wallMinThickness)+gantryFillet,((mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2)/-2)+gantryFillet,((mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2)/-2)+gantryFillet]) cube([(2*crossRodDiameter+2*wallMinThickness+2*teflonTapeThickness+gantryGap)-2*gantryFillet,(mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2)-2*gantryFillet,(mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2)-2*gantryFillet],center=false);
+    translate([(-crossRodDiameter/2-teflonTapeThickness-wallThicknessMin)+gantryFillet,((mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2)/-2)+gantryFillet,((mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2)/-2)+gantryFillet]) cube([(2*crossRodDiameter+2*wallThicknessMin+2*teflonTapeThickness+gantryGap)-2*gantryFillet,(mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2)-2*gantryFillet,(mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2)-2*gantryFillet],center=false);
     sphere(r=gantryFillet, $fn = fnSmallDiameter);
 };
 union(){
 // Fastening Block
-rotate([180,90,0]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,(crossRodDiameter/2+teflonTapeThickness+wallMinThickness)-(mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap)])
-cube ([mountPlateXLength,mountPlateYLength,2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
+rotate([180,90,0]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,(crossRodDiameter/2+teflonTapeThickness+wallThicknessMin)-(mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap)])
+cube ([mountPlateXLength,mountPlateYLength,2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap], center=false);
 
 // Fastening Block 2
-rotate([180,-90,0]) translate([crossRodDiameter/2+teflonTapeThickness,-crossRodDiameter/2-teflonTapeThickness-mountPlateYLength,-crossRodDiameter/2-teflonTapeThickness-wallMinThickness])
-cube ([mountPlateXLength,mountPlateYLength,2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
+rotate([180,-90,0]) translate([crossRodDiameter/2+teflonTapeThickness,-crossRodDiameter/2-teflonTapeThickness-mountPlateYLength,-crossRodDiameter/2-teflonTapeThickness-wallThicknessMin])
+cube ([mountPlateXLength,mountPlateYLength,2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap], center=false);
 
 
 
@@ -47,16 +47,16 @@ translate([crossRodDiameter/2+gantryGap/2,0,0])
 	};
 
 // Lower Filler Cross
-translate([-crossRodDiameter/2-teflonTapeThickness-wallMinThickness/2,0,0])
+translate([-crossRodDiameter/2-teflonTapeThickness-wallThicknessMin/2,0,0])
 	{
-	cube([wallMinThickness,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
-	cube([wallMinThickness,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([wallThicknessMin,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([wallThicknessMin,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
 	};
 // Upper Filler Cross
-translate([crossRodDiameter*1.5+teflonTapeThickness+gantryGap+wallMinThickness*0.5,0,0])
+translate([crossRodDiameter*1.5+teflonTapeThickness+gantryGap+wallThicknessMin*0.5,0,0])
 	{
-	cube([wallMinThickness,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
-	cube([wallMinThickness,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([wallThicknessMin,mountPlateXLength*2+crossRodDiameter+teflonTapeThickness*2,crossRodDiameter+teflonTapeThickness*2], center=true);
+	cube([wallThicknessMin,crossRodDiameter+teflonTapeThickness*2,mountPlateYLength*2+crossRodDiameter+teflonTapeThickness*2], center=true);
 	};
 
 // Filler Cube 1
@@ -67,10 +67,10 @@ translate([gantryGap+crossRodDiameter,-mountPlateYLength/2-crossRodDiameter/2-te
 cube([crossRodDiameter+teflonTapeThickness*2,mountPlateYLength,crossRodDiameter+teflonTapeThickness*2], center=true);
 // Filler Cube 3
 translate([0,0,crossRodDiameter/2+teflonTapeThickness+mountPlateXLength/2])
-cube([crossRodDiameter+teflonTapeThickness*2+wallMinThickness*2,crossRodDiameter+teflonTapeThickness*2,mountPlateXLength], center=true);
+cube([crossRodDiameter+teflonTapeThickness*2+wallThicknessMin*2,crossRodDiameter+teflonTapeThickness*2,mountPlateXLength], center=true);
 // Filler Cube 4
 translate([0,0,-crossRodDiameter/2-teflonTapeThickness-mountPlateXLength/2])
-cube([crossRodDiameter+teflonTapeThickness*2+wallMinThickness*2,crossRodDiameter+teflonTapeThickness*2,mountPlateXLength], center=true);
+cube([crossRodDiameter+teflonTapeThickness*2+wallThicknessMin*2,crossRodDiameter+teflonTapeThickness*2,mountPlateXLength], center=true);
 };
 };
 // Main Cross
@@ -79,17 +79,17 @@ translate([crossRodDiameter+gantryGap-2*teflonTapeThickness,0,0]) rotate([0,0,0]
 
 
 // Mounting Cutout
-rotate([0,90,0]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,-crossRodDiameter/2-teflonTapeThickness-wallMinThickness]) difference()
+rotate([0,90,0]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,-crossRodDiameter/2-teflonTapeThickness-wallThicknessMin]) difference()
 	{
-	cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
-	translate([wallMinThickness,wallMinThickness,-.5]) cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength+1:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap+1], center=false);
+	cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap], center=false);
+	translate([wallThicknessMin,wallThicknessMin,-.5]) cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap?mountPlateZLength+1:2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap+1], center=false);
 	};
 
 // Mounting Cutout inverted
-rotate([90,0,-90]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,(crossRodDiameter/2+teflonTapeThickness+wallMinThickness)-(mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap)]) difference()
+rotate([90,0,-90]) translate([crossRodDiameter/2+teflonTapeThickness,crossRodDiameter/2+teflonTapeThickness,(crossRodDiameter/2+teflonTapeThickness+wallThicknessMin)-(mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap)]) difference()
 	{
-	cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap], center=false);
-	translate([wallMinThickness,wallMinThickness,-.5]) cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap?mountPlateZLength+1:2*crossRodDiameter+2*teflonTapeThickness+2*wallMinThickness+gantryGap+1], center=false);
+	cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap?mountPlateZLength:2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap], center=false);
+	translate([wallThicknessMin,wallThicknessMin,-.5]) cube ([mountPlateXLength,mountPlateYLength,mountPlateZLength>2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap?mountPlateZLength+1:2*crossRodDiameter+2*teflonTapeThickness+2*wallThicknessMin+gantryGap+1], center=false);
 	};
 
 };
@@ -99,7 +99,7 @@ module Tunnel (Length)
 //Slide "tube"
 difference()
 	{
-	cylinder(h=Length,d=crossRodDiameter+2*wallMinThickness+2*teflonTapeThickness,center=true, $fn = fnLargeDiameter); //main cylinder
+	cylinder(h=Length,d=crossRodDiameter+2*wallThicknessMin+2*teflonTapeThickness,center=true, $fn = fnLargeDiameter); //main cylinder
 	cylinder(h=Length+10, d=crossRodDiameter+2*teflonTapeThickness,center=true, $fn = fnLargeDiameter); //hole
 	};
 };
@@ -121,7 +121,7 @@ module DrillCarriageA()
 intersection()
 	{
 	DrillCarriage();
-	translate([-slideSplitWidth/2-(wallMinThickness+teflonTapeThickness+crossRodDiameter/2),-gantryYLength/2,-gantryXLength/2]) cube([wallMinThickness+teflonTapeThickness+crossRodDiameter/2,gantryYLength,gantryXLength],center=false);
+	translate([-slideCarriageSplitWidth/2-(wallThicknessMin+teflonTapeThickness+crossRodDiameter/2),-gantryYLength/2,-gantryXLength/2]) cube([wallThicknessMin+teflonTapeThickness+crossRodDiameter/2,gantryYLength,gantryXLength],center=false);
 	};
 };
 
@@ -130,7 +130,7 @@ module DrillCarriageB()
 intersection()
 	{
 	DrillCarriage();
-	translate([slideSplitWidth/2,-gantryYLength/2,-gantryXLength/2]) cube([(gantryGap/2+wallMinThickness+teflonTapeThickness+crossRodDiameter/2),gantryYLength,gantryXLength],center=false);	
+	translate([slideCarriageSplitWidth/2,-gantryYLength/2,-gantryXLength/2]) cube([gantryGap/2+crossRodDiameter/2-slideCarriageSplitWidth/2,gantryYLength,gantryXLength],center=false);	
 	};
 };
 
@@ -139,7 +139,7 @@ module DrillCarriageC()
 intersection()
 	{
 	DrillCarriage();
-	translate([gantryGap/2+crossRodDiameter/2,-gantryYLength/2,-gantryXLength/2]) cube([crossRodDiameter/2+gantryGap/2-slideSplitWidth/2,gantryYLength,gantryXLength],center=false);
+	translate([gantryGap/2+crossRodDiameter/2,-gantryYLength/2,-gantryXLength/2]) cube([crossRodDiameter/2+gantryGap/2-slideCarriageSplitWidth/2,gantryYLength,gantryXLength],center=false);
 	};
 };
 
@@ -148,6 +148,6 @@ module DrillCarriageD()
 intersection()
 {
 	DrillCarriage();
-	translate([slideSplitWidth/2+gantryGap+2*teflonTapeThickness+2*wallMinThickness+crossRodDiameter/2,-gantryYLength/2,-gantryXLength/2]) cube([wallMinThickness+teflonTapeThickness+crossRodDiameter/2,gantryYLength,gantryXLength],center=false);
+	translate([slideCarriageSplitWidth/2+gantryGap+crossRodDiameter,-gantryYLength/2,-gantryXLength/2]) cube([wallThicknessMin+teflonTapeThickness+crossRodDiameter/2,gantryYLength,gantryXLength],center=false);
 };
 };
