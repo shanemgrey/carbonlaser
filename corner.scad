@@ -20,11 +20,13 @@ module Body(){
 
 //un-comment for visual fasterner reference
     
-//translate([cornerSize/2.4,cornerSize-cornerSize/3,minStructuralThickness]) rotate([0,0,0]) CountersinkDrilling();
-//translate([cornerSize-cornerSize/3,cornerSize/2.4,minStructuralThickness]) rotate([0,0,0]) CountersinkDrilling();
-//translate([cornerSize-cornerSize/3,cornerSize-screwHeadDepth,cornerSize*0.53]) rotate([90,0,0]) CountersinkDrilling();
-//translate([cornerSize-screwHeadDepth,cornerSize-cornerSize/3,cornerSize*0.67]) rotate([0,-90,0]) CountersinkDrilling();    
- 
+/*    
+translate([cornerSize/3,cornerSize-screwHeadDepth,minStructuralThickness+boardThickness/2]) rotate([90,0,0]) CountersinkDrilling();
+translate([cornerSize-screwHeadDepth,cornerSize/3,minStructuralThickness+boardThickness/2]) rotate([0,-90,0]) CountersinkDrilling();
+translate([cornerSize-cornerSize/3,cornerSize-screwHeadDepth,cornerSize*0.4]) rotate([90,0,0]) CountersinkDrilling();
+translate([cornerSize-screwHeadDepth,cornerSize-cornerSize/3,cornerSize*0.6]) rotate([0,-90,0]) CountersinkDrilling();    
+*/ 
+
 
 
 intersection(){
@@ -33,12 +35,13 @@ intersection(){
         cube(cornerSize,center = false);
          rotate([0,0,-45]) translate([-(mooringHoleDiameter + 2*minStructuralThickness+screwHeadDepth)/2,cornerSize/2,0]) {Tab();};
         };
-   translate([-minStructuralThickness-screwHeadDepth,-minStructuralThickness-screwHeadDepth,minStructuralThickness+screwHeadDepth]) cube(cornerSize, center = false); 
+
+translate([-minStructuralThickness-screwHeadDepth,-minStructuralThickness-screwHeadDepth,minStructuralThickness]) cube(cornerSize, center = false); 
         //drill holes
-translate([cornerSize/2.4,cornerSize-cornerSize/3,minStructuralThickness]) rotate([0,0,0]) CountersinkDrilling();
-translate([cornerSize-cornerSize/3,cornerSize/2.4,minStructuralThickness]) rotate([0,0,0]) CountersinkDrilling();
-//translate([cornerSize-cornerSize/3,cornerSize-screwHeadDepth,cornerSize*0.53]) rotate([90,0,0]) CountersinkDrilling();
-translate([cornerSize-screwHeadDepth,cornerSize-cornerSize/3,cornerSize*0.67]) rotate([0,-90,0]) CountersinkDrilling();    
+translate([cornerSize/3,cornerSize-screwHeadDepth,minStructuralThickness+boardThickness/2]) rotate([90,0,0]) CountersinkDrilling();
+translate([cornerSize-screwHeadDepth,cornerSize/3,minStructuralThickness+boardThickness/2]) rotate([0,-90,0]) CountersinkDrilling();
+translate([cornerSize-cornerSize/3,cornerSize-screwHeadDepth,cornerSize*0.4]) rotate([90,0,0]) CountersinkDrilling();
+translate([cornerSize-screwHeadDepth,cornerSize-cornerSize/3,cornerSize*0.6]) rotate([0,-90,0]) CountersinkDrilling();    
         
         
         
@@ -58,9 +61,8 @@ translate([cornerSize-screwHeadDepth,cornerSize-cornerSize/3,cornerSize*0.67]) r
         translate([0,3*cornerSize,cornerSize]) sphere(r=.005, center=true);
         
 };
-    };
+};
 }
-
 module Tab(){  
     difference(){
         hull(){
