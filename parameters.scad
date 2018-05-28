@@ -65,16 +65,16 @@ gantryFillet = 3;
 teflonTapeThickness = 0.1; // The tape used inside the slides to reduce friction on the slides
 
 // Parameters specific to outer housing corners
-boardThickness = 19; // thickness of boards used for all sides
+boardThickness = 17; // thickness of boards used for all sides
 screwLength = 30; // screw length less head, used for holes
-screwThreadDiameter = 5; // Outer diameter of thread, used for hole sizing
-screwHeadDiameter = 9; // Diameter of screw head, used for countersinking
-screwHeadDepth = 5; // Depth of countersinking
-minStructuralThickness = 10; // Plastic min depth, from bottom of countersink to end of that wall
-cornerSize = 100; // overall cube size for corner
+screwThreadDiameter = 3; // Outer diameter of thread, used for hole sizing
+screwHeadDiameter = 9.3; // Diameter of screw head, used for countersinking
+screwHeadDepth = 3.5; // Depth of countersinking
+minStructuralThickness = 3; // Plastic min depth, from bottom of countersink to end of that wall
+cornerSize = 30; // overall cube size for corner
 tabSize = 20; // how far out the tab sticks
 tabScrewDiameter = 5; // size of hole in tab
-mooringHoleDiameter = 15; // Diameter of hole for attaching to a surface
+mooringHoleDiameter = 3; // Diameter of hole for attaching to a surface
 
 
 // Bolt Type 1 is used for clamping the larger parts, like the slide carriage together.
