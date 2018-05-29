@@ -33,6 +33,7 @@ intersection(){
     difference(){
     union(){
         cube(cornerSize,center = false);
+        // comment next line to remove mounting tab
          rotate([0,0,-45]) translate([-(mooringHoleDiameter + 2*minStructuralThickness+screwHeadDepth)/2,cornerSize/2,0]) {Tab();};
         };
 
